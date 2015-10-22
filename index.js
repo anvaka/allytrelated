@@ -18,7 +18,10 @@ var c = new Crawler({
     if (related && related.length > 0) {
       var lastRelated = $(related[related.length - 1]);
       var header = lastRelated.find('h2');
-      assertRelated(header.text());
+      if (!isRelated(header.text())) {
+        console.error('https://www.youtube.com' + result.request.path + ' has no related channels. Ignoring');
+        return;
+      }
       var link = lastRelated.find('.yt-uix-tile-link');
       link.each(function(index, a) {
         var $a = $(a);
@@ -43,13 +46,11 @@ var c = new Crawler({
 
 // Queue just one URL, with default callback
 c.queue('https://www.youtube.com/channel/UCy1Ms_5qBTawC-k7PVjHXKQ');
-function assertRelated(text) {
+function isRelated(text) {
   if (!typeof text === 'string') {
     throw new Error('related is supposed to be a text');
   }
-  if (text.indexOf('Related channels') < 0) {
-    throw new Error('The last related group is not a related channel');
-  }
+  return text.indexOf('Related channels') > -1;
 }
 
 function getName(path) {

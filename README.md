@@ -1,14 +1,7 @@
 # allytrelated
 
-A crawler for related youtube channels. Why not?
-
-# install
-
-With [npm](https://npmjs.org) do:
-
-```
-npm install allytrelated
-```
+A crawler for related youtube channels. Why not? Just playing with the data,
+maybe nothing major.
 
 # license
 

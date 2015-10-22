@@ -11,5 +11,8 @@
   "repository": {
     "type": "git",
     "url": "https://github.com/anvaka/allytrelated"
+  },
+  "dependencies": {
+    "crawler": "^0.4.3"
   }
 }

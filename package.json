@@ -13,6 +13,9 @@
     "url": "https://github.com/anvaka/allytrelated"
   },
   "dependencies": {
-    "crawler": "^0.4.3"
+    "JSONStream": "^1.0.6",
+    "bloomfilter": "0.0.16",
+    "crawler": "^0.4.3",
+    "event-stream": "^3.3.2"
   }
 }

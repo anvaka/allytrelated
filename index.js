@@ -1,58 +1,104 @@
-var Crawler = require("crawler");
-var url = require('url');
-var knownPages = new Set();
+var outFileName = 'youtube.json';
+var fs = require('fs');
+var JSONStream = require('JSONStream');
+var es = require('event-stream');
+var startCrawl = require('./lib/startCrawl.js');
+var outgoing;
+// we will use bloom filter to check whether website is already indexed.
+var bloom = initBloomFilter();
+readProcessedFile(outFileName, crawl);
 
-var c = new Crawler({
-  maxConnections: 1,
-  // This will be called for each crawled page
-  callback: function(error, result, $) {
-    if (error) {
-      console.error('noooo', error);
-      return;
-    }
-    var name = getName(result.request.path);
-    console.log(name);
-    // $ is Cheerio by default
-    //a lean implementation of core jQuery designed specifically for the server
-    var related = $('.branded-page-related-channels');
-    if (related && related.length > 0) {
-      var lastRelated = $(related[related.length - 1]);
-      var header = lastRelated.find('h2');
-      if (!isRelated(header.text())) {
-        console.error('https://www.youtube.com' + result.request.path + ' has no related channels. Ignoring');
-        return;
-      }
-      var link = lastRelated.find('.yt-uix-tile-link');
-      link.each(function(index, a) {
-        var $a = $(a);
-        var toQueueUrl = $a.attr('href');
-        var id = getName(toQueueUrl);
-        console.log(' ' + id  + ' ' + $a.text());
-        if (knownPages.has(id)) {
-          return;
-        }
-        knownPages.add(id);
-        c.queue('https://www.youtube.com' + toQueueUrl);
-      });
-    } else {
-      console.error('No related channels');
-    }
-  },
-  onDrain: function() {
-    console.error('Done!');
-    process.exit(0);
-  }
-});
+function crawl(queue) {
+  startCrawl(queue, onProcessed);
 
-// Queue just one URL, with default callback
-c.queue('https://www.youtube.com/channel/UCy1Ms_5qBTawC-k7PVjHXKQ');
-function isRelated(text) {
-  if (!typeof text === 'string') {
-    throw new Error('related is supposed to be a text');
+  function onProcessed(page) {
+    bloom.add(page.id);
+    write(page);
+    enqueueRelated(page.related, queue);
   }
-  return text.indexOf('Related channels') > -1;
+}
+function write(page) {
+  if(!outgoing) {
+    createOutStream();
+  }
+
+  outgoing.write(page);
 }
 
-function getName(path) {
-  return path.substring(path.lastIndexOf('/') + 1, path.length);
+function createOutStream() {
+  outgoing = JSONStream.stringify(false);
+  var fileStream = fs.createWriteStream(outFileName, {
+    encoding: 'utf8',
+    flags: 'a'
+  });
+  outgoing.pipe(fileStream);
+}
+
+function enqueueRelated(related, queue) {
+  if (!related || related.length === 0) return;
+  for (var i = 0; i < related.length; ++i) {
+    if (!bloom.test(related[i]) && queue.length < 100000) {
+      // we will cap our queue at 100,000 channels. Subsequent reruns should catch missing channels
+      queue.push(related[i]);
+      // make sure we are not adding anything already queued.
+      bloom.add(related[i]);
+    }
+  }
+}
+
+function readProcessedFile(fileName, done) {
+  if (!fs.existsSync(fileName)) {
+    startFromTotalBiscuit(done);
+    return;
+  }
+  var queue = [];
+  var processedRows = 0;
+
+  console.log('parsing processed list...');
+  var parser = JSONStream.parse();
+  fs.createReadStream(fileName)
+    .pipe(parser)
+    .pipe(es.mapSync(markProcessed))
+    .on('end', bloomInitialized);
+
+  function markProcessed(pkg) {
+    processedRows += 1;
+    bloom.add(pkg.id);
+  }
+
+  function bloomInitialized() {
+    // on the second pass we wil go into each related channel and queue it up
+    // if it was not already indexed.
+    var parser = JSONStream.parse();
+    fs.createReadStream(fileName)
+      .pipe(parser)
+      .pipe(es.mapSync(addToQueue))
+      .on('end', reportDone);
+  }
+
+  function reportDone() {
+    console.log('Processed: ' + processedRows );
+    console.log('Enqueued: ' + queue.length);
+    done(queue);
+  }
+
+  function addToQueue(pkg) {
+    if (!pkg.related) return;
+    enqueueRelated(pkg.related, queue);
+  }
+}
+
+function startFromTotalBiscuit(cb) {
+  setTimeout(function() {
+    cb(['channel/UCy1Ms_5qBTawC-k7PVjHXKQ']);
+  }, 0);
+}
+
+function initBloomFilter() {
+  var BloomFilter = require('bloomfilter').BloomFilter;
+  var bloom = new BloomFilter(
+    1024 *1024 * 9, // number of bits to allocate.
+    66        // number of hash functions.
+  );
+  return bloom;
 }

@@ -15,7 +15,8 @@
   "dependencies": {
     "JSONStream": "^1.0.6",
     "bloomfilter": "0.0.16",
-    "crawler": "^0.4.3",
-    "event-stream": "^3.3.2"
+    "cheerio": "^0.19.0",
+    "event-stream": "^3.3.2",
+    "request-promise": "^1.0.2"
   }
 }

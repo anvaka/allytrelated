@@ -90,7 +90,7 @@ function readProcessedFile(fileName, done) {
 
 function startFromTotalBiscuit(cb) {
   setTimeout(function() {
-    cb(['channel/UCy1Ms_5qBTawC-k7PVjHXKQ']);
+    cb(['UCy1Ms_5qBTawC-k7PVjHXKQ']);
   }, 0);
 }
 

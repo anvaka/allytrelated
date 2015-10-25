@@ -8,8 +8,8 @@ var outgoing;
 var bloom = initBloomFilter();
 readProcessedFile(outFileName, crawl);
 
-function crawl(queue) {
-  startCrawl(queue, onProcessed);
+function crawl(queue, processedRows) {
+  startCrawl(queue, onProcessed, processedRows);
 
   function onProcessed(page) {
     bloom.add(page.id);
@@ -79,7 +79,7 @@ function readProcessedFile(fileName, done) {
   function reportDone() {
     console.log('Processed: ' + processedRows );
     console.log('Enqueued: ' + queue.length);
-    done(queue);
+    done(queue, processedRows);
   }
 
   function addToQueue(pkg) {
@@ -90,7 +90,7 @@ function readProcessedFile(fileName, done) {
 
 function startFromTotalBiscuit(cb) {
   setTimeout(function() {
-    cb(['UCy1Ms_5qBTawC-k7PVjHXKQ']);
+    cb(['UCy1Ms_5qBTawC-k7PVjHXKQ'], 0);
   }, 0);
 }
 

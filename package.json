@@ -17,6 +17,7 @@
     "bloomfilter": "0.0.16",
     "cheerio": "^0.19.0",
     "event-stream": "^3.3.2",
+    "ngraph.centrality": "^0.1.5",
     "ngraph.graph": "0.0.12",
     "ngraph.offline.layout": "^1.0.1",
     "ngraph.tobinary": "^1.0.1",

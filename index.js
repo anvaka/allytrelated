@@ -41,7 +41,7 @@ function createOutStream() {
 function enqueueRelated(related, queue) {
   if (!related || related.length === 0) return;
   for (var i = 0; i < related.length; ++i) {
-    if (!bloom.test(related[i]) && queue.length < 100000) {
+    if (!bloom.test(related[i]) && queue.getLength() < 100000) {
       // we will cap our queue at 100,000 channels. Subsequent reruns should catch missing channels
       queue.push(related[i]);
       // make sure we are not adding anything already queued.

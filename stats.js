@@ -1,4 +1,4 @@
-require('./lib/loadGraph.js')(process.argv[2] || './data/youtube.json', start);
+require('./lib/loadGraph.js')(process.argv[2] || './data/youtube-user.json', start);
 var centrality = require('ngraph.centrality');
 
 function start(graph) {

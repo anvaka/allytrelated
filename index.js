@@ -1,14 +1,18 @@
-var outFileName = 'youtube.json';
+var outFileName = 'youtube-user.json';
 var fs = require('fs');
 var JSONStream = require('JSONStream');
 var es = require('event-stream');
+var createQueue = require('./lib/queue.js');
 var startCrawl = require('./lib/startCrawl.js');
 var outgoing;
+var MAX_RUNNING = 5;
 // we will use bloom filter to check whether website is already indexed.
 var bloom = initBloomFilter();
 readProcessedFile(outFileName, crawl);
 
-function crawl(queue, processedRows) {
+
+function crawl(ids, processedRows) {
+  var queue = createQueue(ids, MAX_RUNNING);
   startCrawl(queue, onProcessed, processedRows);
 
   function onProcessed(page) {

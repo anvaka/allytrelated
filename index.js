@@ -5,7 +5,7 @@ var es = require('event-stream');
 var createQueue = require('./lib/queue.js');
 var startCrawl = require('./lib/startCrawl.js');
 var outgoing;
-var MAX_RUNNING = 5;
+var MAX_RUNNING = 2;
 // we will use bloom filter to check whether website is already indexed.
 var bloom = initBloomFilter();
 readProcessedFile(outFileName, crawl);
@@ -41,11 +41,14 @@ function createOutStream() {
 function enqueueRelated(related, queue) {
   if (!related || related.length === 0) return;
   for (var i = 0; i < related.length; ++i) {
-    if (!bloom.test(related[i]) && queue.getLength() < 100000) {
-      // we will cap our queue at 100,000 channels. Subsequent reruns should catch missing channels
-      queue.push(related[i]);
+    var inBloom =bloom.test(related[i]);
+    if (!inBloom) {
       // make sure we are not adding anything already queued.
       bloom.add(related[i]);
+    }
+    if (!inBloom && queue.length < 100000) {
+      // we will cap our queue at 100,000 channels. Subsequent reruns should catch missing channels
+      queue.push(related[i]);
     }
   }
 }

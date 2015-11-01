@@ -22,6 +22,6 @@
     "ngraph.offline.layout": "^1.0.1",
     "ngraph.tobinary": "^1.0.1",
     "ngraph.todot": "^0.1.6",
-    "request-promise": "^1.0.2"
+    "request": "^2.65.0"
   }
 }

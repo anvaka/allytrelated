@@ -18,9 +18,10 @@ function crawl(ids, processedRows) {
   function onProcessed(page) {
     bloom.add(page.id);
     write(page);
-    enqueueRelated(page.related, queue);
+    enqueueRelated(page.related, queue, page);
   }
 }
+
 function write(page) {
   if(!outgoing) {
     createOutStream();
@@ -38,9 +39,13 @@ function createOutStream() {
   outgoing.pipe(fileStream);
 }
 
-function enqueueRelated(related, queue) {
+function enqueueRelated(related, queue, page) {
   if (!related || related.length === 0) return;
   for (var i = 0; i < related.length; ++i) {
+    if (!related[i]) {
+      console.log('missing related for ' + JSON.stringify(page));
+      throw 'blah';
+    }
     var inBloom =bloom.test(related[i]);
     if (!inBloom) {
       // make sure we are not adding anything already queued.
@@ -91,7 +96,7 @@ function readProcessedFile(fileName, done) {
 
   function addToQueue(pkg) {
     if (!pkg.related) return;
-    enqueueRelated(pkg.related, queue);
+    enqueueRelated(pkg.related, queue, pkg);
   }
 }
 

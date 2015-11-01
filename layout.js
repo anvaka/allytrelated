@@ -1,5 +1,5 @@
 var save = require('ngraph.tobinary');
-require('./lib/loadGraph.js')(process.argv[2] || './data/youtube.json', start);
+require('./lib/loadGraph.js')(process.argv[2] || './data/youtube-user.json', start);
 
 
 function start(graph) {

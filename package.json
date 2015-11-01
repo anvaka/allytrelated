@@ -14,8 +14,6 @@
   },
   "dependencies": {
     "JSONStream": "^1.0.6",
-    "bloomfilter": "0.0.16",
-    "cheerio": "^0.19.0",
     "event-stream": "^3.3.2",
     "ngraph.centrality": "^0.1.5",
     "ngraph.graph": "0.0.12",

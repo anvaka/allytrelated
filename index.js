@@ -6,17 +6,15 @@ var createQueue = require('./lib/queue.js');
 var startCrawl = require('./lib/startCrawl.js');
 var outgoing;
 var MAX_RUNNING = 2;
-// we will use bloom filter to check whether website is already indexed.
-var bloom = initBloomFilter();
+var seen = new Set();
 readProcessedFile(outFileName, crawl);
-
 
 function crawl(ids, processedRows) {
   var queue = createQueue(ids, MAX_RUNNING);
   startCrawl(queue, onProcessed, processedRows);
 
   function onProcessed(page) {
-    bloom.add(page.id);
+    seen.add(page.id);
     write(page);
     enqueueRelated(page.related, queue, page);
   }
@@ -46,12 +44,12 @@ function enqueueRelated(related, queue, page) {
       console.log('missing related for ' + JSON.stringify(page));
       throw 'blah';
     }
-    var inBloom =bloom.test(related[i]);
-    if (!inBloom) {
+    var alreadySeen = seen.has(related[i]);
+    if (!alreadySeen) {
       // make sure we are not adding anything already queued.
-      bloom.add(related[i]);
+      seen.add(related[i]);
     }
-    if (!inBloom && queue.length < 100000) {
+    if (!alreadySeen && queue.length < 100000) {
       // we will cap our queue at 100,000 channels. Subsequent reruns should catch missing channels
       queue.push(related[i]);
     }
@@ -71,14 +69,14 @@ function readProcessedFile(fileName, done) {
   fs.createReadStream(fileName)
     .pipe(parser)
     .pipe(es.mapSync(markProcessed))
-    .on('end', bloomInitialized);
+    .on('end', fileInitialized);
 
   function markProcessed(pkg) {
     processedRows += 1;
-    bloom.add(pkg.id);
+    seen.add(pkg.id);
   }
 
-  function bloomInitialized() {
+  function fileInitialized() {
     // on the second pass we wil go into each related channel and queue it up
     // if it was not already indexed.
     var parser = JSONStream.parse();
@@ -104,13 +102,4 @@ function startFromTotalBiscuit(cb) {
   setTimeout(function() {
     cb(['UCy1Ms_5qBTawC-k7PVjHXKQ'], 0);
   }, 0);
-}
-
-function initBloomFilter() {
-  var BloomFilter = require('bloomfilter').BloomFilter;
-  var bloom = new BloomFilter(
-    1024 *1024 * 9, // number of bits to allocate.
-    66        // number of hash functions.
-  );
-  return bloom;
 }

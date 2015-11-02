@@ -47,11 +47,11 @@ function enqueueRelated(related, queue, page) {
     var alreadySeen = seen.has(related[i]);
     if (!alreadySeen) {
       // make sure we are not adding anything already queued.
-      seen.add(related[i]);
+      seen.add(JSON.parse(JSON.stringify(related[i])));
     }
     if (!alreadySeen && queue.length < 100000) {
       // we will cap our queue at 100,000 channels. Subsequent reruns should catch missing channels
-      queue.push(related[i]);
+      queue.push(JSON.parse(JSON.stringify(related[i])));
     }
   }
 }

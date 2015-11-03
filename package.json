@@ -17,7 +17,9 @@
     "event-stream": "^3.3.2",
     "ngraph.centrality": "^0.1.5",
     "ngraph.graph": "0.0.12",
+    "ngraph.hits": "^0.1.1",
     "ngraph.offline.layout": "^1.0.1",
+    "ngraph.pagerank": "^0.1.3",
     "ngraph.tobinary": "^1.0.1",
     "ngraph.todot": "^0.1.6",
     "request": "^2.65.0"

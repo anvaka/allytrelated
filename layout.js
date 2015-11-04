@@ -10,5 +10,5 @@ function start(graph) {
   // layout.run();
   save(graph, { outDir: './data' });
   console.log('Done.');
-  console.log('Copy `links.bin`, `labels.bin` and positions.bin into vis folder');
+  console.log('Copy `links.bin`, `labels.json` and positions.bin into dat folder');
 }

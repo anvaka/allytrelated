@@ -1,3 +1,7 @@
+/**
+ * Prerequiesites:
+ * node --max-old-space-size=10000 toBinaryGraph.js
+ */
 var createWhisper = require('ngraph.cw');
 var save = require('./lib/saveClusters.js');
 var outFileName = './data/allClusters.json';

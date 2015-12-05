@@ -1,3 +1,7 @@
+/**
+ * Prerequisites: Youtube is indexed by
+ * node index.js
+ */
 var path = require('path');
 var save = require('ngraph.tobinary');
 var fileName = process.argv[2] || './youtube-user.json';

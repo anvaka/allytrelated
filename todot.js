@@ -1,4 +1,4 @@
-require('./lib/loadGraph.js')(process.argv[2] || './data/youtube.json', start);
+require('./lib/loadGraph.js')(process.argv[2] || './youtube-user.json', start);
 var todot = require('ngraph.todot');
 
 function start(graph) {

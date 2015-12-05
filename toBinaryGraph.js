@@ -1,6 +1,6 @@
 var path = require('path');
 var save = require('ngraph.tobinary');
-var fileName = process.argv[2] || './data/youtube-user.json';
+var fileName = process.argv[2] || './youtube-user.json';
 
 console.log('This program saves graph into binary file');
 console.log('Loading raph from ' + fileName + '...');

@@ -4,7 +4,7 @@ var outFileName = 'allClusters.json';
 
 console.log('This program will detect clusters in the graph and save them into ' + outFileName);
 console.log('Loading graph...');
-require('./lib/loadGraph.js')(process.argv[2] || './data/youtube-user.json', detectClusters);
+require('./lib/loadGraph.js')(process.argv[2] || './youtube-user.json', detectClusters);
 
 function detectClusters(graph) {
   console.log('Graph loaded: ' + graph.getLinksCount() + ' edges, ' + graph.getNodesCount() + ' nodes');

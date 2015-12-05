@@ -1,10 +1,11 @@
 var createWhisper = require('ngraph.cw');
 var save = require('./lib/saveClusters.js');
-var outFileName = 'allClusters.json';
+var outFileName = './data/allClusters.json';
 
 console.log('This program will detect clusters in the graph and save them into ' + outFileName);
 console.log('Loading graph...');
-require('./lib/loadGraph.js')(process.argv[2] || './youtube-user.json', detectClusters);
+var graph = require('./lib/loadBinaryGraph.js')('./data');
+detectClusters(graph);
 
 function detectClusters(graph) {
   console.log('Graph loaded: ' + graph.getLinksCount() + ' edges, ' + graph.getNodesCount() + ' nodes');
@@ -19,7 +20,7 @@ function detectClusters(graph) {
     console.log('Iteration ' + iterationNumber + '; Change rate: ' + whisper.getChangeRate());
   }
 
-  var clusterIdToNode = whisper.creeateClusterMap();
-  save(clusterIdToNode, outFileName);
+  var clusterIdToNodes = whisper.createClusterMap();
+  save(clusterIdToNodes, outFileName);
   console.log('Done!');
 }

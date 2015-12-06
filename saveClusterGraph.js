@@ -14,9 +14,16 @@ function start(clusters) {
 
   clusters.forEachCluster(function (nodes, clusterId) {
     var relatedClusters = getRelatedClusters(nodes, clusterId);
+    var srcSize = clusters.getSize(clusterId);
     relatedClusters.forEach(function (strength, relatedClusterId) {
-      // TODO: can check if strength is above threshold
-      globalGraph.addLink(clusterId, relatedClusterId);
+      // Add connection between clusters only when there is a strong correlation between them:
+      var dstSize = clusters.getSize(relatedClusterId);
+      var similarity = strength/(dstSize + srcSize);
+      if (similarity > 0.18) {
+        //console.log('Clusters are very related: ' + similarity + '; ' +
+        //clusters.info(clusterId), clusters.info(relatedClusterId));
+        globalGraph.addLink(clusterId, relatedClusterId);
+      }
     });
   });
 
@@ -33,14 +40,12 @@ function start(clusters) {
 
     function assignNodeStrengthConnection(node) {
       var nodeCluster = clusters.getNeigbourClusters(node);
-      assignClusterStrengthConnection(nodeCluster);
+      nodeCluster.forEach(assignClusterStrengthConnection);
     }
 
     function assignClusterStrengthConnection(dstCluster) {
-      if (dstCluster !== srcClusterId) {
-        var currentStrength = (strength.get(dstCluster) || 0) + 1;
-        strength.set(dstCluster, currentStrength);
-      }
+      var currentStrength = (strength.get(dstCluster) || 0) + 1;
+      strength.set(dstCluster, currentStrength);
     }
   }
 }

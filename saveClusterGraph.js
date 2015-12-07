@@ -1,6 +1,8 @@
 var globalGraph = require('ngraph.graph')({uniqueLinkId: false});
 require('./lib/readClusters')('data', start);
 var save = require('ngraph.tobinary');
+var saveWeights = require('./lib/saveWeights.js');
+
 var outDir = './data/global';
 // could run parallel:
 // forEachCluster(subGraph) {
@@ -27,10 +29,16 @@ function start(clusters) {
     });
   });
 
-  console.log('Saving global graph into ' + outDir);
-  save(globalGraph, { outDir: outDir });
-  console.log('Done.');
+  saveClusterGraph();
+
   return;
+
+  function saveClusterGraph() {
+    console.log('Saving global graph into ' + outDir);
+    save(globalGraph, { outDir: outDir });
+    saveWeights(globalGraph, clusters, outDir);
+    console.log('Done.');
+  }
 
   function getRelatedClusters(nodes, srcClusterId) {
     var strength = new Map();
@@ -49,3 +57,4 @@ function start(clusters) {
     }
   }
 }
+

@@ -11,7 +11,7 @@ function start(clusters) {
   const app = express()
   app.use(cors());
   app.get('/', function (req, res) {
-    var channelId = req.query.channelId;
+    var channelId = req.query.id;
     console.log('Returning graph for: ' + channelId);
     var info = clusters.getNodeClusterGraph(channelId);
     res.send(tojson(info));

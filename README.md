@@ -44,7 +44,7 @@ Once crawling is done, you can compact the graph by running:
 node --max-old-space-size=10000 toBinaryGraph.js
 ```
 
-This will store graph into `data` folder using [ngraph.tbinary](https://github.com/anvaka/ngraph.tobinary), 
+This will store graph into `data` folder using [ngraph.tbinary](https://github.com/anvaka/ngraph.tobinary),
 which compcats the data set 6.6x times (from `737MB` down to `112MB`)
 
 # notes
@@ -53,6 +53,37 @@ I'm currently experimenting with clustered graph layout, and this repository
 consist of crawler + clustering utilities. Ideally it all should be split up
 into multiple repositories, but I'm not sure which experiment will survive and
 which one will go away. So keeping it here.
+
+## notes for future self
+
+To generate clusters run:
+
+```
+# First index the youtube reachable graph (will take several weeks for single host)
+node index.js
+
+# store graph into binary format (fast)
+node --max-old-space-size=10000 toBinaryGraph.js
+
+# Detect all outgoing clusters using ngraph.cw (~60 minutes?).
+# Outgoing cluster means that graph is considered directed, and only outgoing
+# traversal from tail to head is allowed). This will save clusters into data/allClusters.json
+node --max-old-space-size=10000 findClusters.js`
+
+# If you wish to have graph of clusters (i.e. graph where each node is a
+# cluster, and link between clsuters means there are connections in the original
+# graph between nodes within cluster)
+node --max-old-space-size=10000 saveClusterGraph.js`
+
+# to visually debug individual cluster:
+cd tools/cluster-view
+npm i
+npm start
+open src/index.html
+
+# you can add channel id to the query string to build cluster view for a channel
+index.html?id=UCy1Ms_5qBTawC-k7PVjHXKQ
+```
 
 # license
 

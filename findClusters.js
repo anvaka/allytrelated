@@ -4,6 +4,7 @@
  */
 var createWhisper = require('ngraph.cw');
 var save = require('./lib/saveClusters.js');
+
 var outFileName = './data/allClusters.json';
 
 console.log('This program will detect clusters in the graph and save them into ' + outFileName);

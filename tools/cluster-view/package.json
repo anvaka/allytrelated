@@ -8,6 +8,7 @@
   "dependencies": {
     "es6-promise": "^3.0.2",
     "isomorphic-fetch": "^2.2.0",
+    "ngraph.centrality": "^0.1.5",
     "ngraph.events": "0.0.3",
     "ngraph.fromjson": "^0.1.8",
     "ngraph.pixel": "^1.0.0",

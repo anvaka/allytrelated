@@ -4,10 +4,6 @@ var save = require('ngraph.tobinary');
 var saveWeights = require('./lib/saveWeights.js');
 
 var outDir = './data/global';
-// could run parallel:
-// forEachCluster(subGraph) {
-//   layoutGraph(subGraph);
-// }
 
 function start(clusters) {
   clusters.forEachCluster(function (_, clusterId) {
@@ -22,8 +18,6 @@ function start(clusters) {
       var dstSize = clusters.getSize(relatedClusterId);
       var similarity = strength/(dstSize + srcSize);
       if (similarity > 0.18) {
-        //console.log('Clusters are very related: ' + similarity + '; ' +
-        //clusters.info(clusterId), clusters.info(relatedClusterId));
         globalGraph.addLink(clusterId, relatedClusterId);
       }
     });

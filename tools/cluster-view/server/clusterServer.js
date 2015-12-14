@@ -11,11 +11,33 @@ function start(clusters) {
   const app = express()
   app.use(cors());
   app.get('/', function (req, res) {
+    console.log('Handling query: ' + req.query);
     var channelId = req.query.id;
     console.log('Returning graph for: ' + channelId);
-    var info = clusters.getNodeClusterGraph(channelId);
-    res.send(tojson(info));
+
+    var cluster = clusters.getClusterByChannelId(channelId);
+    var info = [clusters.getClusterGraph(cluster)];
+    // if we want related neighbours we'll add them here
+    if (req.query.related) {
+      console.log('Loading related clusters');
+      var nodeId = clusters.findNodeByData(channelId);
+      var neighbourIds = clusters.getNeigbourClusterIds(nodeId)
+      neighbourIds.forEach(function(clusterId) {
+        var cluster = clusters.getClusterById(clusterId);
+        info.push(clusters.getClusterGraph(cluster));
+      });
+      console.log(neighbours);
+    }
+    res.send(JSON.stringify(info.map(graphToJson)));
+
+    function addNeigbour(cluster) {
+      cluster.nodes
+    }
   });
+
+  function graphToJson(graph) {
+    return tojson(graph)
+  }
 
   var server = app.listen(3001, function () {
     var host = server.address().address;

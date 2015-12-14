@@ -5,7 +5,12 @@ require('isomorphic-fetch');
 var channelId = query.id || 'UCy1Ms_5qBTawC-k7PVjHXKQ';
 var fromjson = require('ngraph.fromjson');
 
-fetch('http://0.0.0.0:3001/?id=' + channelId)
+var url = 'http://0.0.0.0:3001/?id=' + channelId;
+if (query.related) {
+  url += '&related=1';
+}
+
+fetch(url)
   .then(function(response) {
     if (response.status >= 400) {
       throw new Error("Bad response from server");
@@ -14,7 +19,7 @@ fetch('http://0.0.0.0:3001/?id=' + channelId)
   })
   .then(function(jsonGraph) {
     console.log(jsonGraph);
-    var graph = fromjson(jsonGraph);
+    var graph = fromjson(jsonGraph[0]);
     window.g = graph; // for console debugging
     var renderGraph = require('ngraph.pixel');
     printStats(graph);

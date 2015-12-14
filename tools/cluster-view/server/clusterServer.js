@@ -26,7 +26,7 @@ function start(clusters) {
         var cluster = clusters.getClusterById(clusterId);
         info.push(clusters.getClusterGraph(cluster));
       });
-      console.log(neighbours);
+      console.log(neighbourIds);
     }
     res.send(JSON.stringify(info.map(graphToJson)));
 

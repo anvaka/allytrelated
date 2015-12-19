@@ -6,9 +6,13 @@ var query = require('query-string').parse(window.location.search.substring(1));
 var channelId = query.id || 'UCy1Ms_5qBTawC-k7PVjHXKQ';
 var fromjson = require('ngraph.fromjson');
 
-var url = 'http://0.0.0.0:3001/?id=' + channelId;
+var handler = query.operation || 'cluster'; // channel
+var url = 'http://0.0.0.0:3001/' + handler + '?id=' + channelId;
 if (query.related) {
   url += '&related=1';
+}
+if (query.depth) {
+  url += '&depth=' + query.depth;
 }
 
 fetch(url)

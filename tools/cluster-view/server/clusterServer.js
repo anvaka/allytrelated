@@ -10,10 +10,24 @@ require('../../../lib/readClusters')(clusterPath, start);
 function start(clusters) {
   const app = express()
   app.use(cors());
-  app.get('/', function (req, res) {
+  app.get('/cluster', clusterHandler);
+  app.get('/channel', channelHandler);
+
+  function graphToJson(graph) {
+    return tojson(graph)
+  }
+
+  var server = app.listen(3001, function () {
+    var host = server.address().address;
+    var port = server.address().port;
+
+    console.log('Example app listening at http://%s:%s', host, port);
+  });
+
+  function clusterHandler(req, res) {
     console.log('Handling query: ' + req.query);
     var channelId = req.query.id;
-    console.log('Returning graph for: ' + channelId);
+    console.log('Returning cluster graph for: ' + channelId);
 
     var cluster = clusters.getClusterByChannelId(channelId);
     var info = [clusters.getClusterGraph(cluster)];
@@ -28,21 +42,21 @@ function start(clusters) {
       });
       console.log(neighbourIds);
     }
+
     res.send(JSON.stringify(info.map(graphToJson)));
 
     function addNeigbour(cluster) {
       cluster.nodes
     }
-  });
-
-  function graphToJson(graph) {
-    return tojson(graph)
   }
 
-  var server = app.listen(3001, function () {
-    var host = server.address().address;
-    var port = server.address().port;
-
-    console.log('Example app listening at http://%s:%s', host, port);
-  });
+  function channelHandler(req, res) {
+    console.log('Handling query: ' + req.query);
+    var channelId = req.query.id;
+    var depth = parseInt(req.query.depth, 10);
+    if (isNaN(depth)) depth = 2;
+    console.log('Returning channel graph for: ' + channelId);
+    var info = [clusters.getSrcSubgraph(channelId, depth)];
+    res.send(JSON.stringify(info.map(graphToJson)));
+  }
 }

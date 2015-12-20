@@ -25,7 +25,7 @@ function start(clusters) {
   });
 
   function clusterHandler(req, res) {
-    console.log('Handling query: ' + req.query);
+    console.log('Handling query: ' + JSON.stringify(req.query));
     var channelId = req.query.id;
     console.log('Returning cluster graph for: ' + channelId);
 
@@ -51,12 +51,15 @@ function start(clusters) {
   }
 
   function channelHandler(req, res) {
-    console.log('Handling query: ' + req.query);
+    console.time('channel');
+    console.log('Handling query: ' + JSON.stringify(req.query));
     var channelId = req.query.id;
     var depth = parseInt(req.query.depth, 10);
     if (isNaN(depth)) depth = 2;
     console.log('Returning channel graph for: ' + channelId);
     var info = [clusters.getSrcSubgraph(channelId, depth)];
-    res.send(JSON.stringify(info.map(graphToJson)));
+    var data = JSON.stringify(info.map(graphToJson));
+    console.timeEnd('channel');
+    res.send(data);
   }
 }

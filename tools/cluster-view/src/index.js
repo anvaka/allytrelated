@@ -50,7 +50,7 @@ function mergeGraphs(graphs) {
     cluster.forEachLink(appendLink);
 
     function appendNode(node) {
-      graph.addNode(node, idx);
+      graph.addNode(node.id, idx);
     }
 
     function appendLink(link) {

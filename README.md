@@ -45,7 +45,7 @@ node --max-old-space-size=10000 toBinaryGraph.js
 ```
 
 This will store graph into `data` folder using [ngraph.tbinary](https://github.com/anvaka/ngraph.tobinary),
-which compcats the data set 6.6x times (from `737MB` down to `112MB`)
+which compacts the data set 6.6x times (from `737MB` down to `112MB`)
 
 # notes
 

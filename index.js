@@ -77,7 +77,7 @@ function readProcessedFile(fileName, done) {
   }
 
   function fileInitialized() {
-    // on the second pass we wil go into each related channel and queue it up
+    // on the second pass we will go into each related channel and queue it up
     // if it was not already indexed.
     var parser = JSONStream.parse();
     fs.createReadStream(fileName)

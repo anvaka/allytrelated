@@ -1,5 +1,5 @@
 /**
- * Prerequiesites:
+ * Prerequisites:
  * node --max-old-space-size=10000 toBinaryGraph.js
  */
 var createWhisper = require('ngraph.cw');

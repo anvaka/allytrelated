@@ -28,12 +28,20 @@ fetch(url)
     window.g = graph; // for console debugging
     var renderGraph = require('ngraph.pixel');
     printStats(graph);
-    var renderer = renderGraph(graph);
+    var renderer = renderGraph(graph, {
+      node: function(n) {
+        return { size: 10, color: 0xFFFFFF };
+      },
+      link: function (l) {
+        return {
+          fromColor: 0xFFFFFF,
+          toColor: 0xFFFFFF
+        }
+      }
+    });
     renderer.on('nodeclick', function (node) {
       window.open('https://www.youtube.com/channel/' + node.id, '_blank');
     });
-    renderer.nodeSize(getNodeSize);
-    renderer.linkColor(getLinkColor);
     var stopLayoutDelay = graph.getNodesCount() * 100;
     setTimeout(function() { renderer.stable(true); }, stopLayoutDelay);
   });

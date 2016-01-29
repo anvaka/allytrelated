@@ -11,7 +11,7 @@
     "ngraph.centrality": "^0.1.5",
     "ngraph.events": "0.0.3",
     "ngraph.fromjson": "^0.1.8",
-    "ngraph.pixel": "^1.0.0",
+    "ngraph.pixel": "^2.0.0",
     "query-string": "^3.0.0"
   },
   "devDependencies": {

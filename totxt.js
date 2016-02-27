@@ -13,7 +13,9 @@ function visit(channel) {
   var related = channel.related;
   var fromId = channelToId.get(channel.id);
 
-  if (related) {
+  var suggestedByYoutube = (channel.relatedTitle === 'Popular channels' ||
+                            channel.relatedTitle === 'Related channels');
+  if (related && !suggestedByYoutube) {
     for (var i = 0; i < related.length; ++i) {
       ensureAdded(related[i]);
       console.log(fromId + ' ' + channelToId.get(related[i]));

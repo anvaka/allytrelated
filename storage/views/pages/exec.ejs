@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>Execute script against database</title>
+<style type="text/css" media="screen">
+* {
+  box-sizing: border-box;
+}
+    #editor { 
+        position: absolute;
+        top: 0;
+        right: 0;
+        height: 300px;
+        width: 100%;
+    }
+    .results {
+      position:absolute;
+      padding: 8px;
+      bottom: 0;
+      right: 0;
+      top: 300px;
+      width: 100%;
+      overflow: auto;
+    }
+    .run {
+      position: absolute;
+      bottom: 20px;
+      right: 10px;
+      color: red;
+      height: 32px;
+      width: 100px;
+    }
+    body {
+      width: 100%;
+      height: 100%;
+      position: absolute;
+      margin: 0;
+      padding: 0;
+      overflow: hidden;
+  }
+</style>
+</head>
+<body>
+  <div id="editor">select * from channels limit 10;</div>
+  <pre class='results'></pre>
+  <button type="submit" class='run' id='runBtn'>Run!</button>
+
+  <script src="https://code.jquery.com/jquery-2.2.1.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.2.3/ace.js" type="text/javascript" charset="utf-8"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.2.3/mode-mysql.js" type="text/javascript" charset="utf-8"></script>
+  <script>
+      var editor = ace.edit("editor");
+      editor.setTheme("ace/theme/monokai");
+      editor.getSession().setMode("ace/mode/mysql");
+      var results = $('.results');
+      $('#runBtn').click(function(e) {
+        e.preventDefault();
+        exec();
+      });
+
+      $('body').keydown(function(e) {
+        if (e.keyCode === 13 &&  (e.metaKey || e.ctrlKey)) {
+          exec();
+        }
+      });
+
+      function exec() {
+        results[0].innerText = '';
+        var query = {query: editor.getValue()};
+        $.ajax({
+          type: 'POST',
+          url: '/exec',
+          data: JSON.stringify(query),
+          contentType:"application/json; charset=utf-8",
+          dataType:"json"
+        }).done(function(data) {
+          results[0].innerText = JSON.stringify(data, null, 2);
+        }).fail(function(err) {
+          results[0].innerText ='Error! ' +  JSON.stringify(err);
+        });
+      }
+  </script>
+</body>
+</html>

@@ -10,16 +10,16 @@ loadGraph('./youtube-worker.json', onGotGraph);
 
 function onGotGraph(graph) {
   console.log('Graph parsed. Found ' + graph.getNodesCount() + ' nodes and ' + graph.getLinksCount() + ' edges');
-  // var layout = require('hlayout')(graph);
-  // layout.run();
+  var layout = require('hlayout')(graph);
+  layout.run();
 
-  // var topLevelGroups = layout.getGroupsAtLevel(0);
-  // saveGroups(topLevelGroups);
+  var topLevelGroups = layout.getGroupsAtLevel(0);
+  saveGroups(topLevelGroups);
 
   console.log('Layout completed. Saving to binary format');
   saveIteration('positions-s.yt.2d');
-  // save(graph, { outDir: './data' });
-  // console.log('Done.');
+  save(graph, { outDir: './data' });
+  console.log('Done.');
 
   function saveGroups(topLevelGroups) {
     var fname = path.join('data', 'groups.bin');

@@ -53,13 +53,13 @@ function onGotGraph(graph) {
 
     graph.forEachNode(function(node) {
       var idx = i * 4 * 3;
-      // var pos = layout.getNodePosition(node.id);
-      // if (!pos) {
-      //   missed += 1;
-      //   console.log('missing position for ' + node.id);
-      //   pos = {x : 0, y: 0};
-      // }
-      //
+      var pos = layout.getNodePosition(node.id);
+      if (!pos) {
+        missed += 1;
+        console.log('missing position for ' + node.id);
+        pos = {x : 0, y: 0};
+      }
+
       var size = 0;
       var links = graph.getLinks(node.id);
       if (links) {
@@ -68,7 +68,6 @@ function onGotGraph(graph) {
         });
       }
 
-      var pos = {x: 0, y: 0};
       buf.writeInt32LE(pos.x, idx);
       buf.writeInt32LE(pos.y, idx + 4);
       buf.writeInt32LE(size, idx + 8);

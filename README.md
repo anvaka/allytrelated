@@ -1,7 +1,7 @@
 # allytrelated
 
 A crawler for related youtube channels. Why not? Just playing with the data,
-maybe nothing major.
+maybe nothing major (or maybe something very major).
 
 It works by performing BFS on youtube channels starting from [TotalBiscuit channel](https://www.youtube.com/user/TotalHalibut).
 This will cover ~3 million channels.

@@ -1,4 +1,12 @@
-// this script uses Lambda from aws to crawl. Highly experimental and is not intended for replication
+/**
+ * This script uses Lambda from aws to crawl. The lambda function body can be
+ * found in ./lib/lambda.js.
+ *
+ * The API gateway endpoint should be passed via environment variable YCRAWL_EP,
+ * the key to the gateway should be passed as YCRAWL_KEY.
+ *
+ * If key and gateway endpoint are missing, this module throws an error.
+ */
 
 var outFileName = 'youtube-worker-jul31.json';
 var fs = require('fs');
@@ -92,9 +100,9 @@ function readProcessedFile(fileName, done) {
   var processedRowsCount = 0;
 
   console.log('Parsing processed list...');
-  var parser = JSONStream.parse();
+  var jsonStreamParser = JSONStream.parse();
   fs.createReadStream(fileName)
-    .pipe(parser)
+    .pipe(jsonStreamParser)
     .pipe(es.mapSync(markProcessed))
     .on('end', fileInitialized);
 
@@ -107,9 +115,9 @@ function readProcessedFile(fileName, done) {
     // on the second pass we will go into each related channel and queue it up
     // if it was not already indexed.
     console.log('Restoring download queue...');
-    var parser = JSONStream.parse();
+    var jsonStreamParser = JSONStream.parse();
     fs.createReadStream(fileName)
-      .pipe(parser)
+      .pipe(jsonStreamParser)
       .pipe(es.mapSync(addToQueue))
       .on('end', reportDone);
   }

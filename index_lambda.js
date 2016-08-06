@@ -19,7 +19,7 @@ function crawl(queue, processedRowsCount) {
 
   function chunkDownloaded(chunk, workerId, timeMS) {
     if (typeof chunk.forEach !== 'function') {
-      console.log('What are you: ', chunk);
+      console.log('What are you: ' + chunk + '?');
       throw new Error('somehow no forEach in chunk')
     }
     chunk.forEach(channelDownloaded);

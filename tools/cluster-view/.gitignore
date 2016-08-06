@@ -1,8 +1,0 @@
-.DS_STORE
-*.log
-bundle.js
-
-node_modules
-
-dist
-coverage

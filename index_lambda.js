@@ -1,6 +1,6 @@
 // this script uses Lambda from aws to crawl. Highly experimental and is not intended for replication
 
-var outFileName = 'youtube-worker.json';
+var outFileName = 'youtube-worker-jul31.json';
 var fs = require('fs');
 var JSONStream = require('JSONStream');
 var es = require('event-stream');
@@ -18,6 +18,10 @@ function crawl(queue, processedRowsCount) {
   downloadMore();
 
   function chunkDownloaded(chunk, workerId, timeMS) {
+    if (typeof chunk.forEach !== 'function') {
+      console.log('What are you: ', chunk);
+      throw new Error('somehow no forEach in chunk')
+    }
     chunk.forEach(channelDownloaded);
     activeWorker -= 1;
     processedRowsCount += chunk.length;

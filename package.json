@@ -21,6 +21,7 @@
     "ngraph.graph": "0.0.12",
     "ngraph.offline.layout": "^1.0.1",
     "ngraph.tobinary": "^1.0.1",
-    "request": "^2.65.0"
+    "request": "^2.65.0",
+    "ngraph.louvain": "^1.0.1"
   }
 }

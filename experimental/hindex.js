@@ -2,6 +2,9 @@ var path = require('path');
 var save = require('ngraph.tobinary');
 var fs = require('fs');
 
+var nativeClusters = require('ngraph.louvain/native.js').fromNgraph;
+var hlayout = require('hlayout');
+
 console.log('Parsing graph file...');
 
 var loadGraph = require('../lib/loadGraph.js');
@@ -10,7 +13,7 @@ loadGraph('./youtube-worker-jul31.json', onGotGraph, addSubscribers);
 
 function onGotGraph(graph) {
   console.log('Graph parsed. Found ' + graph.getNodesCount() + ' nodes and ' + graph.getLinksCount() + ' edges');
-  var layout = require('hlayout')(graph);
+  var layout = hlayout(graph, nativeClusters);
   layout.run();
 
   var topLevelGroups = layout.getGroupsAtLevel(0);

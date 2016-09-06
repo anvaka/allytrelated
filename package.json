@@ -23,5 +23,9 @@
     "ngraph.tobinary": "^1.0.1",
     "request": "^2.65.0",
     "ngraph.louvain": "^1.0.1"
+  },
+  "devDependencies": {
+    "ngraph.coarsen": "^1.2.0",
+    "protobufjs": "^5.0.1"
   }
 }

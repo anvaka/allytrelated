@@ -5,44 +5,42 @@ console.log('Loading 0 level graph...');
 
 var currentLayerNumber = 0;
 
+// There are lots of clusters (tens of thousands) with 1-2 nodes in them. It would be inefficient
+// to store each of them into individual file.
+var nodesPerFileThreshold = 50000;
+
 var fs = require('fs');
 var path = require('path');
 var outDir = path.join(__dirname, '..', 'data', 'subgraphs');
 var clustersDir = path.join(__dirname,'..', 'data', 'clusters');
+var getNodesInCluster = require('./lib/readClusters.js');
 
-var allGraphsIndexFileName = path.join(outDir, 'allSubgraphs.json');
-var allSavedGraphs = [];
-
-var readClusters = require('./lib/readClusters.js');
-var coarsen = require('ngraph.coarsen');
 var toProtobuf = require('ngraph.toprotobuf');
 var fromProtobuf = require('ngraph.toprotobuf/readPrimitive.js');
 
-var currentLayerDef = readLayerDef(currentLayerNumber);
-var currentLayerPath;
+var srcGraph = readLayerGraph(currentLayerNumber);
 var ratio;
 
 do {
-  currentLayerPath = path.join(outDir, currentLayerNumber.toString(10));
-  saveSubgraphs(currentLayerDef);
+  var clusterGraph = readLayerGraph(currentLayerNumber + 1)
+  if (!clusterGraph) break;
 
-  currentLayerNumber += 1;
+  saveSubgraphs(srcGraph, clusterGraph);
 
-  var nextLayerDef = readLayerDef(currentLayerNumber)
-  var nextLayerSize = getNodeCount(nextLayerDef);
-  var currentLayerSize = getNodeCount(currentLayerDef)
+  var nextLayerSize = clusterGraph.graph.getNodesCount();
+  var currentLayerSize = srcGraph.graph.getNodesCount();
 
   ratio = nextLayerSize/currentLayerSize;
-  currentLayerDef = nextLayerDef;
-} while (ratio > 0.01 && currentLayerDef);
+  srcGraph = clusterGraph;
 
-console.log('Saving index of all saved graphs into ', allGraphsIndexFileName);
-fs.writeFileSync(allGraphsIndexFileName, JSON.stringify(allSavedGraphs), 'utf8');
-console.log('Done');
+  currentLayerNumber += 1;
+} while (ratio > 0.01);
 
-function readLayerDef(layerIndex) {
+
+function readLayerGraph(layerIndex) {
   var layerPath = path.join(clustersDir, layerIndex.toString(10));
   var layerGraphDefPath = path.join(layerPath, 'graph-def.json');
+  var nodesInCluster = getNodesInCluster(layerPath);
 
   console.log('Trying to read graph def at ' + layerGraphDefPath);
   if (!fs.existsSync(layerGraphDefPath)) {
@@ -53,49 +51,115 @@ function readLayerDef(layerIndex) {
   var graphInfo = fromProtobuf(layerGraphDefPath);
   console.log('GraphDef loaded: ' + JSON.stringify(graphInfo.def, null, 2));
 
-  graphInfo.clusters = readClustersInfo(layerPath)
-
-  return graphInfo;
+  var graph = toNgraph(graphInfo.graphs[0]);
+  return {
+    graph: graph,
+    nodesInCluster: nodesInCluster
+  };
 }
 
-function readClustersInfo(layerPath) {
-  console.log('Loading clusters from ' + layerPath);
-
-  return readClusters(layerPath);
-}
-
-function getNodeCount(layerDef) {
-  if (!layerDef) return 0;
-
-  return layerDef.def.stats.nodes;
-}
-
-function saveSubgraphs(layerDef) {
-  var srcGraph = toNgraph(layerDef.graph);
+function saveSubgraphs(current, next) {
   console.log('Building coarse graphs at level ' + currentLayerNumber);
+  var graphBuffer = createGraphBuffer(nodesPerFileThreshold, currentLayerNumber);
 
-  var communityGraph = coarsen(srcGraph, layerDef.clusters);
-  var communityNodeGraphNodeCount = communityGraph.getNodesCount();
+  // next level graph is a community graph (graph of clusters) for the current
+  // level graph
+  var clusterGraph = next.graph;
+  var communityNodeGraphNodeCount = clusterGraph.getNodesCount();
   var currentNodeIndex = 0;
 
   // In community graph each node is a community (aka cluster) inside lower
   // level graph.
-  communityGraph.forEachNode(saveInternalNode);
+  clusterGraph.forEachNode(saveInternalNode);
 
-  function saveInternalNode(communityNode) {
+  graphBuffer.commit();
+
+  function saveInternalNode(cluster) {
     currentNodeIndex += 1;
-    var nodeSet = communityNode.data;
+    var clusterId = Number.parseInt(cluster.id, 10);
+    if (Number.isNaN(clusterId)) throw new Error('Unexpected cluster id: ' + cluster.id);
 
-    var graph = makeInternalGraph(nodeSet, srcGraph);
-    var graphFolder = path.join(currentLayerPath, communityNode.id.toString(10));
+    var nodeSet = current.nodesInCluster.get(clusterId);
+    if (!nodeSet) throw new Error('Cluster is not defuned: ' + clusterId);
 
-    console.log(currentNodeIndex + '/' + communityNodeGraphNodeCount + ': Saving ' + graphFolder);
-    toProtobuf(graph, {
-      outDir: graphFolder,
-      saveLinksData: true
+    var graph = makeInternalGraph(nodeSet, srcGraph.graph);
+    graphBuffer.add(graph, clusterId);
+    console.log(currentNodeIndex + '/' + communityNodeGraphNodeCount + ' added ');
+  }
+}
+
+function createGraphBuffer(nodesPerFileThreshold, currentLayerNumber) {
+  // accumulator for total number of nodes in the current buffer
+  var totalNodes = 0;
+
+  var currentLayerPath = path.join(outDir, currentLayerNumber.toString(10));
+
+  // list of graphs that is accumulated to the total of `nodesPerFileThreshold`
+  // Once the threshold is met, the graphs in this array are dumped to the disk
+  var buffer = [];
+
+  // chunks are just sequentially increased with each buffer dump and used to
+  // name files.
+  var chunk = 0;
+  var chunks = [];
+  var clusterInfo = {}
+
+  var graphInfo = {
+    clusterInfo: clusterInfo,
+    chunks: chunks
+  };
+
+  return {
+    add: add,
+    commit: commit
+  };
+
+  function commit() {
+    dump();
+
+    var indexName = path.join(currentLayerPath, 'index.json')
+    console.log('Saving index of all saved graphs on this layer ', indexName);
+    fs.writeFileSync(indexName, JSON.stringify(graphInfo, null, 2), 'utf8');
+    console.log('Done');
+  }
+
+  function add(graph, clusterId) {
+    totalNodes += graph.getNodesCount();
+
+    buffer.push({
+      graph: graph,
+      clusterId: clusterId
+    });
+
+    if (totalNodes > nodesPerFileThreshold) {
+      dump();
+    }
+  }
+
+  function dump() {
+    var chunkFolder = path.join(currentLayerPath, chunk.toString(10));
+    chunks.push(chunkFolder);
+
+    var graphs = [];
+    buffer.forEach(function(x, idx) {
+      var graph = x.graph;
+      clusterInfo[x.clusterId] = {
+        nodes: graph.getNodesCount(),
+        edges: graph.getLinksCount(),
+        chunk: chunkFolder,
+        index: idx
+      }
+
+      graphs.push(graph);
+    });
+
+    toProtobuf(graphs, {
+      outDir: chunkFolder
     })
 
-    allSavedGraphs.push(graphFolder);
+    chunk += 1;
+    totalNodes = 0;
+    buffer = [];
   }
 }
 
@@ -131,8 +195,8 @@ function toNgraph(linksNodes) {
   });
 
   linksNodes.links.forEach(function(link) {
-    var from = nodes[link.source].id;
-    var to = nodes[link.target].id;
+    var from = nodes[link.from].id;
+    var to = nodes[link.to].id;
 
     if (link.data) graph.addLink(from, to, link.data);
     else graph.addLink(from, to);

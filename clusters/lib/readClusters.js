@@ -1,10 +1,10 @@
-module.exports = readClusters;
+module.exports = getNodesInCluster;
 
 var path = require('path');
 var fs = require('fs');
 var ProtoBuf = require('protobufjs');
 
-function readClusters(clustersPath) {
+function getNodesInCluster(clustersPath) {
   var clustersFile = path.join(clustersPath, 'clusters.pb');
   var protoFileName = clustersFile + '.proto';
   var builder = ProtoBuf.loadProtoFile(protoFileName);
@@ -14,22 +14,18 @@ function readClusters(clustersPath) {
 
   var records = Clusters.decode(clustersBuffer).records;
 
-  var nodeClassLookup = new Map();
+  var nodesInCluster = new Map();
 
   records.forEach(function(r) {
-    nodeClassLookup.set(r.nodeId, r.clusterId);
-  })
+    var nodes = nodesInCluster.get(r.clusterId);
+    if (!nodes) {
+      nodes = new Set();
+      nodesInCluster.set(r.clusterId, nodes);
+    }
+    nodes.add(r.nodeId);
+  });
 
-  return {
-    getClass: getClass
-  };
-
-  function getClass(nodeId) {
-    var classId = nodeClassLookup.get(nodeId);
-    if (classId === undefined) throw new Error('Node is not defined: ' + nodeId);
-
-    return classId;
-  }
+  return nodesInCluster;
 }
 
 function readBuffer(name) {

@@ -146,7 +146,7 @@ function createGraphBuffer(nodesPerFileThreshold, currentLayerNumber) {
       clusterInfo[x.clusterId] = {
         nodes: graph.getNodesCount(),
         edges: graph.getLinksCount(),
-        chunk: chunkFolder,
+        chunk: chunk,
         index: idx
       }
 

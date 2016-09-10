@@ -1,0 +1,14 @@
+{
+  "name": "cluster-debugger",
+  "version": "0.0.0",
+  "description": "Cluster debugger",
+  "main": "electron.js",
+  "dependencies": {
+    "vue": "next",
+    "vue-electron": "^1.0.0",
+    "vue-resource": "^0.7.0",
+    "vue-router": "next"
+  },
+  "devDependencies": {},
+  "author": "anvaka <anvaka@gmail.com>"
+}

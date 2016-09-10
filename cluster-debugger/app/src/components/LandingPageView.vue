@@ -3,12 +3,30 @@
     margin-top: -25px;
     width: 450px;
   }
+
+  .welcome-screen {
+    align-items: center;
+    background:
+      radial-gradient(
+        ellipse at center,
+        rgba(255, 255, 255, 1) 0%,
+        rgba(229, 229, 229, .85) 100%
+      );
+    background-position: center;
+    display: flex;
+    font-family: Lato, Helvetica, sans-serif;
+    justify-content: center;
+    text-align: center;
+    height: 100%;
+  }
 </style>
 
 <template>
-  <div>
-    <h1>Welcome to clusters debugger</h1>
-    <a class="waves-effect waves-light btn" v-on:click="openClustersFolder">Open Cluster Folder</a>
+  <div class='welcome-screen'>
+    <div class='content'>
+      <h1>Welcome to clusters debugger</h1>
+      <a class="waves-effect waves-light btn" v-on:click="openClustersFolder">Open Cluster Folder</a>
+    </div>
   </div>
 </template>
 

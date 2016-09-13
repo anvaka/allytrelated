@@ -50,7 +50,7 @@
     </div>
     <div class='graph-view'>
       <router-link class="waves-effect waves-light btn" to="/">Go Back</router-link>
-      <router-view></router-view>
+      <router-view class='scene'></router-view>
     </div>
   </div>
 </template>

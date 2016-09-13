@@ -1,6 +1,14 @@
+<style>
+.graph-container {
+  background: pink;
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  top: 0;
+}
+</style>
 <template>
-<div>
-  <h2>Why hello! Graph will be here</h2>
-  {{$route.params.clusterId}}
+<div class='graph-container'>
+  <h3>{{$route.params.clusterId}}</h3>
 </div>
 </template>

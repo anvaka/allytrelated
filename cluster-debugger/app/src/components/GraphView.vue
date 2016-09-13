@@ -13,14 +13,28 @@
 </div>
 </template>
 <script>
+import readGraph from '../lib/readGraph.js'
+
 export default {
   name: 'graph-view',
   route: {
     data() {
-      console.log('Data called on ' + this.$route.params.clusterId)
+      if (this.renderer) {
+        this.renderer.dispose()
+        this.renderer = null
+      }
+      let clusterId = this.$route.params.clusterId
+      let folder = this.$route.query.folder
+      var graph = readGraph(clusterId, folder)
+      console.log(graph.nodes.length, graph.links.length)
+      // this.renderer = createRenderer(graph);
     },
+
     deactivate() {
-      console.log('Deactivate called on ' + this.$route.params.clusterId)
+      if (this.renderer) {
+        this.renderer.dispose();
+        this.renderer = null;
+      }
     }
   }
 }

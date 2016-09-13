@@ -16,11 +16,16 @@ function getClusters(clustersPath) {
   clusters = Object.keys(clusterInfo).map(x => {
     let cluster = clusterInfo[x]
     cluster.id = x
+
     return cluster
   }).sort(byNodesAndLinks)
 
-  cachedClusters[path] = clusters
-  return clusters
+  cachedClusters[path] = {
+    clusters,
+    clusterLookup: clusterInfo
+  }
+
+  return cachedClusters[path]
 }
 
 function byNodesAndLinks(a, b) {

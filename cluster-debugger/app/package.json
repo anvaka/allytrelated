@@ -4,10 +4,10 @@
   "description": "Cluster debugger",
   "main": "electron.js",
   "dependencies": {
-    "vue": "next",
+    "vue": "^1.0.26",
     "vue-electron": "^1.0.0",
     "vue-resource": "^0.7.0",
-    "vue-router": "next"
+    "vue-router": "^0.7.13"
   },
   "devDependencies": {},
   "author": "anvaka <anvaka@gmail.com>"

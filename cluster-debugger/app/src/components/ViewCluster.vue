@@ -40,16 +40,16 @@
       <code>{{$route.query.folder}}</code>
       <h4>Largest subgraphs</h4>
       <div class='clusters-list'>
-        <router-link v-for="cluster in clusters" class="cluster-item" :to="{path: '/view-cluster/' + cluster.id, query: $route.query}">
+        <a v-for="cluster in clusters" class="cluster-item" v-link="{path: '/view-cluster/' + cluster.id, query: $route.query}">
             <span>Nodes:</span>
             <strong>{{ cluster.nodes }}</strong>
             <span>Edges:</span>
             <strong>{{ cluster.edges }}</strong>
-        </router-link>
+        </a>
       </div>
     </div>
     <div class='graph-view'>
-      <router-link class="waves-effect waves-light btn" to="/">Go Back</router-link>
+      <a class="waves-effect waves-light btn" v-link="{path: '/', append: false}">Go Back</a>
       <router-view class='scene'></router-view>
     </div>
   </div>

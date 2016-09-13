@@ -1,24 +1,36 @@
 import Vue from 'vue'
 import Electron from 'vue-electron'
 import Resource from 'vue-resource'
-import Router from 'vue-router'
+import VueRouter from 'vue-router'
 
 import App from './App'
-import routes from './routes'
 import 'materialize-css/bin/materialize.css'
 
 Vue.use(Electron)
 Vue.use(Resource)
-Vue.use(Router)
+Vue.use(VueRouter)
 Vue.config.debug = true
 
-const router = new Router({
-  scrollBehavior: () => ({ y: 0 }),
-  routes
+const router = new VueRouter({
+  scrollBehavior: () => ({ y: 0 })
 })
 
-/* eslint-disable no-new */
-new Vue({
-  router,
-  ...App
-}).$mount('#app')
+router.map({
+  '/': {
+    name: 'home',
+    component: require('components/LandingPageView')
+  },
+  '/view-cluster': {
+    component: require('components/ViewCluster'),
+    subRoutes: {
+      '/': {
+        component: require('components/SelectCluster')
+      },
+      '/:clusterId': {
+        component: require('components/GraphView')
+      }
+    }
+  }
+})
+
+router.start(App, '#app')

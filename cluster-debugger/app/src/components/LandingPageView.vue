@@ -34,14 +34,13 @@
 import {remote} from 'electron'
 
 export default {
-  components: { },
   name: 'landing-page',
   methods: {
     openClustersFolder() {
       const {dialog} = remote
       let clsuterFolder = dialog.showOpenDialog({properties: ['openDirectory']})
       if (clsuterFolder) {
-        this.$router.push({
+        this.$router.go({
           path: '/view-cluster',
           query: {
             folder: clsuterFolder[0]

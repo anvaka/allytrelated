@@ -23,6 +23,14 @@
   }
   .graph-view {
     flex: 1;
+    position: relative;
+  }
+  .scene {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
   }
 </style>
 
@@ -32,16 +40,17 @@
       <code>{{$route.query.folder}}</code>
       <h4>Largest subgraphs</h4>
       <div class='clusters-list'>
-        <a v-for="cluster in clusters" class="cluster-item">
+        <router-link v-for="cluster in clusters" class="cluster-item" :to="{path: cluster.id, query: $route.query}" append>
             <span>Nodes:</span>
             <strong>{{ cluster.nodes }}</strong>
             <span>Edges:</span>
             <strong>{{ cluster.edges }}</strong>
-        </a>
+        </router-link>
       </div>
     </div>
     <div class='graph-view'>
       <router-link class="waves-effect waves-light btn" to="/">Go Back</router-link>
+      <router-view></router-view>
     </div>
   </div>
 </template>
@@ -57,6 +66,5 @@ export default {
       return getClusters(this.$route.query.folder).slice(0, 100)
     }
   }
-
 }
 </script>

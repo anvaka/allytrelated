@@ -13,6 +13,7 @@ Vue.use(Router)
 Vue.config.debug = true
 
 const router = new Router({
+  mode: 'history',
   scrollBehavior: () => ({ y: 0 }),
   routes
 })

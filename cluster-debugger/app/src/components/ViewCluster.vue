@@ -40,7 +40,7 @@
       <code>{{$route.query.folder}}</code>
       <h4>Largest subgraphs</h4>
       <div class='clusters-list'>
-        <router-link v-for="cluster in clusters" class="cluster-item" :to="{path: cluster.id, query: $route.query}" append>
+        <router-link v-for="cluster in clusters" class="cluster-item" :to="{path: '/view-cluster/' + cluster.id, query: $route.query}">
             <span>Nodes:</span>
             <strong>{{ cluster.nodes }}</strong>
             <span>Edges:</span>

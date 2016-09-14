@@ -4,8 +4,11 @@
   "description": "Cluster debugger",
   "main": "electron.js",
   "dependencies": {
+    "circle-enclose": "^1.0.0",
     "d3-force": "^1.0.2",
     "ngraph.toprotobuf": "^0.2.1",
+    "three": "^0.80.1",
+    "three.map.control": "^1.4.0",
     "vue": "^1.0.26",
     "vue-electron": "^1.0.0",
     "vue-resource": "^0.7.0",

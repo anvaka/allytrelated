@@ -1,8 +1,7 @@
 import getClusters from './clustersViewModel.js'
-import fromProtoBuf from 'ngraph.toprotobuf/readPrimitive.js'
 import path from 'path'
 
-export default readGraph;
+export default readGraph
 
 function readGraph(clusterId, folder) {
   var record = getClusters(folder).clusterLookup[clusterId]
@@ -12,12 +11,16 @@ function readGraph(clusterId, folder) {
 }
 
 function getGraphFromChunk(record) {
-  var chunkPath = getChunkPath(record.chunk)
+  var chunkPath = record.chunkPath
+  var fromProtoBuf = require('ngraph.toprotobuf/readPrimitive.js')
   var graphsInFile = fromProtoBuf(path.join(chunkPath, 'graph-def.json'))
-  return graphsInFile.graphs[record.index]
-}
+  var graph = graphsInFile.graphs[record.index]
 
-function getChunkPath(chunkId) {
-  // todo: later version will not have path stored
-  return chunkId
+  return {
+    nodes: graph.nodes.map(n => ({ index: n.id })),
+    links: graph.links.map(l => ({
+      source: l.from,
+      target: l.to
+    }))
+  }
 }

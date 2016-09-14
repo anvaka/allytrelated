@@ -16,6 +16,7 @@ function getClusters(clustersPath) {
   clusters = Object.keys(clusterInfo).map(x => {
     let cluster = clusterInfo[x]
     cluster.id = x
+    cluster.chunkPath = clusterIndex.chunks[cluster.chunk]
 
     return cluster
   }).sort(byNodesAndLinks)

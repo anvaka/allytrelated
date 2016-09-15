@@ -40,13 +40,13 @@ do {
 function readLayerGraph(layerIndex) {
   var layerPath = path.join(clustersDir, layerIndex.toString(10));
   var layerGraphDefPath = path.join(layerPath, 'graph-def.json');
-  var nodesInCluster = getNodesInCluster(layerPath);
-
-  console.log('Trying to read graph def at ' + layerGraphDefPath);
   if (!fs.existsSync(layerGraphDefPath)) {
     console.log('Graph def not found. Either we are done, or clusters were not saved');
     return;
   }
+
+  var nodesInCluster = getNodesInCluster(layerPath);
+  console.log('Trying to read graph def at ' + layerGraphDefPath);
 
   var graphInfo = fromProtobuf(layerGraphDefPath);
   console.log('GraphDef loaded: ' + JSON.stringify(graphInfo.def, null, 2));

@@ -181,7 +181,7 @@ function makeInternalGraph(nodeSet, srcGraph) {
     function appendLinkIfInternal(otherNode, nlink) {
       if (!nodeSet.has(otherNode.id)) return; // this edge goes outside. Ignore it.
 
-      graph.addLink(srcNodeId, otherNode.id, nlink.data);
+      if (srcNodeId !== otherNode.id) graph.addLink(srcNodeId, otherNode.id, nlink.data);
     }
   }
 }

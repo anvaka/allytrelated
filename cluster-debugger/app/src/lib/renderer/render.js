@@ -27,16 +27,6 @@ function render(dgraph, container) {
   }
 
   function renderPoints() {
-    dgraph.nodes.forEach(node => {
-      var geometry = new THREE.CircleGeometry(5, 32)
-      var material = new THREE.MeshBasicMaterial({ color: 0xffff00 })
-      var circle = new THREE.Mesh(geometry, material)
-      circle.position.x = node.x
-      circle.position.y = node.y
-
-      scene.add(circle)
-    })
-
     dgraph.links.forEach(edge => {
       var material = new THREE.LineBasicMaterial({
         color: 0x0000ff
@@ -56,6 +46,15 @@ function render(dgraph, container) {
       scene.add(line)
     })
 
+    dgraph.nodes.forEach(node => {
+      var geometry = new THREE.CircleGeometry(5, 32)
+      var material = new THREE.MeshBasicMaterial({ color: 0xffff00 })
+      var circle = new THREE.Mesh(geometry, material)
+      circle.position.x = node.x
+      circle.position.y = node.y
+
+      scene.add(circle)
+    })
     camera.position.z = 30
   }
 

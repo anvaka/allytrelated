@@ -26,6 +26,7 @@
   },
   "devDependencies": {
     "ngraph.coarsen": "^1.2.0",
+    "ngraph.fromjson": "^0.1.8",
     "protobufjs": "^5.0.1"
   }
 }

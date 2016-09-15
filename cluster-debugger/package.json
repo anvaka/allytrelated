@@ -55,6 +55,7 @@
     "webpack-dev-server": "^1.14.1"
   },
   "dependencies": {
-    "materialize-css": "^0.97.7"
+    "materialize-css": "^0.97.7",
+    "ngraph.toprotobuf": "^0.2.1"
   }
 }

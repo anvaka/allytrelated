@@ -21,9 +21,17 @@ function render(dgraph, container) {
   scene.add(ambientLight)
 
   var lastFrame = window.requestAnimationFrame(frame)
+  window.addEventListener('resize', onWindowResize, false)
 
   return {
     dispose
+  }
+
+  function onWindowResize(e) {
+    camera.aspect = window.innerWidth / window.innerHeight
+    camera.updateProjectionMatrix()
+
+    renderer.setSize(window.innerWidth, window.innerHeight)
   }
 
   function renderPoints() {
@@ -35,7 +43,7 @@ function render(dgraph, container) {
       var from = edge.source
       var to = edge.target
       if (from.x === to.x && from.y === to.y) {
-        return;
+        return
       }
 
       var geometry = new THREE.Geometry()
@@ -60,6 +68,8 @@ function render(dgraph, container) {
 
   function dispose() {
     window.cancelAnimationFrame(lastFrame)
+    window.removeEventListener('resize', onWindowResize, false)
+
     controls.dispose()
     container.removeChild(renderer.domElement)
     renderer.dispose()
@@ -82,11 +92,4 @@ function render(dgraph, container) {
 
     return renderer
   }
-
-  // function onWindowResize() {
-  //   camera.aspect = container.clientWidth / container.clientHeight
-  //   camera.updateProjectionMatrix()
-  //
-  //   renderer.setSize(window.innerWidth, window.innerHeight)
-  // }
 }

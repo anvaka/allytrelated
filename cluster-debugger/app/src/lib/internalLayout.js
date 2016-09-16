@@ -25,7 +25,7 @@ function internalLayout(dgraph) {
   var iteration = 0
   var nodesCount = dgraph.nodes.length
   var iterationsCount = Math.min(nodesCount, Math.log(nodesCount) * 30)
-  if (iterationsCount < 2) iterationsCount = 2
+  if (iterationsCount < 100) iterationsCount = 100
 
   while (iteration++ < iterationsCount) {
     simulation.tick()

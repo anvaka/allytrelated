@@ -5,19 +5,22 @@ export default readGraph
 
 function readGraph(clusterId, folder) {
   var record = getClusters(folder).clusterLookup[clusterId]
-  var graph = getGraphFromChunk(record)
+  let graphsInFile = getGraphFromChunk(record)
+  var graph = graphsInFile.graphs[record.index]
 
   printDegreeDistribution(graph)
 
-  return graph
+  return convertToD3Graph(graph)
 }
 
 function getGraphFromChunk(record) {
   var chunkPath = record.chunkPath
-  var fromProtoBuf = require('ngraph.toprotobuf/readPrimitive.js')
-  var graphsInFile = fromProtoBuf(path.join(chunkPath, 'graph-def.json'))
-  var graph = graphsInFile.graphs[record.index]
+  var graphFile = path.join(chunkPath, 'graph-def.json')
 
+  return readGraphFromFile(graphFile)
+}
+
+export function convertToD3Graph(graph) {
   return {
     nodes: graph.nodes.map(n => ({ index: n.id })),
     links: graph.links.map(l => ({
@@ -27,7 +30,12 @@ function getGraphFromChunk(record) {
   }
 }
 
-function printDegreeDistribution(graph) {
+export function readGraphFromFile(graphFile) {
+  var fromProtoBuf = require('ngraph.toprotobuf/readPrimitive.js')
+  return fromProtoBuf(graphFile)
+}
+
+export function printDegreeDistribution(graph) {
   var counts = new Map()
 
   graph.links.forEach(l => {

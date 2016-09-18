@@ -20,6 +20,9 @@ router.map({
     name: 'home',
     component: require('components/LandingPageView')
   },
+  '/view-graph': {
+    component: require('components/ViewGraph')
+  },
   '/view-cluster': {
     component: require('components/ViewCluster'),
     subRoutes: {

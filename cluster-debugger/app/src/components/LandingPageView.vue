@@ -26,6 +26,7 @@
     <div class='content'>
       <h1>Welcome to clusters debugger</h1>
       <a class="waves-effect waves-light btn" v-on:click="openClustersFolder">Open Cluster Folder</a>
+      <a class="waves-effect waves-light btn" v-on:click="openGraphFile">Open Grpah File</a>
     </div>
   </div>
 </template>
@@ -42,6 +43,19 @@ export default {
       if (clsuterFolder) {
         this.$router.go({
           path: '/view-cluster',
+          query: {
+            folder: clsuterFolder[0]
+          }
+        })
+      }
+    },
+
+    openGraphFile() {
+      const {dialog} = remote
+      let clsuterFolder = dialog.showOpenDialog({properties: ['openDirectory']})
+      if (clsuterFolder) {
+        this.$router.go({
+          path: '/view-graph',
           query: {
             folder: clsuterFolder[0]
           }

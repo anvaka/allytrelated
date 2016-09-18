@@ -9,7 +9,7 @@ const ExtractTextPlugin = require('extract-text-webpack-plugin')
 const HtmlWebpackPlugin = require('html-webpack-plugin')
 
 let config = {
-  devtool: '#eval-source-map',
+  devtool: '#inline-source-map ',
   eslint: {
     formatter: require('eslint-friendly-formatter')
   },

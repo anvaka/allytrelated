@@ -68,7 +68,8 @@ function saveProtoObject(object, fileName) {
 }
 
 function number(x) {
-  var result = Number.parseInt(x);
+  var result = Number.parseInt(x, 10);
+  if (Number.isNaN(result)) throw new Error('not a number ' + x)
   return result;
 }
 

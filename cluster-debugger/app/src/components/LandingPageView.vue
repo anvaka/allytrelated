@@ -26,7 +26,7 @@
     <div class='content'>
       <h1>Welcome to clusters debugger</h1>
       <a class="waves-effect waves-light btn" v-on:click="openClustersFolder">Open Cluster Folder</a>
-      <a class="waves-effect waves-light btn" v-on:click="openGraphFile">Open Grpah File</a>
+      <a class="waves-effect waves-light btn" v-on:click="openGraphFile">Open Graph File</a>
     </div>
   </div>
 </template>

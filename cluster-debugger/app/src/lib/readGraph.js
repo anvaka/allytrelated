@@ -31,8 +31,10 @@ function printDegreeDistribution(graph) {
   var counts = new Map()
 
   graph.links.forEach(l => {
-    increment(l.source)
-    increment(l.target)
+    if (l.source !== l.target) {
+      increment(l.source)
+      increment(l.target)
+    }
   })
 
   console.log(Array.from(counts.values()).sort((x, y) => y - x))

@@ -44,19 +44,33 @@ function saveClusters(graph, outDir) {
     toProtobuf(graph, { outDir: dir })
 
     var records = [];
+    var seen = [];
     graph.forEachNode(function(node) {
       var clusterId = clusters.getClass(node.id);
+      seen[clusterId] = 1;
       var record = new NodeCluster();
       record.clusterId = number(clusterId);
       record.nodeId = node.id.toString();
       records.push(record);
     });
 
+    for(var i = 0; i < seen.length; ++i) {
+      if (seen[i] === undefined) {
+        dumpGraph(graph);
+        throw new Error('Found graph with blank claster')
+      }
+    }
+
     var clusters = new Clusters();
     clusters.records = records;
     console.log('records: ' + records.length);
     saveProtoObject(clusters, path.join(dir, 'clusters.pb'));
   }
+}
+
+function dumpGraph(graph) {
+  var todot = require('ngraph.todot');
+  console.log(todot(graph));
 }
 
 function saveProtoObject(object, fileName) {

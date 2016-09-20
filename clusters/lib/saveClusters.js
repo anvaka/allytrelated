@@ -14,7 +14,7 @@ module.exports = saveClusters;
 var builder = ProtoBuf.protoFromString(getClustersProtoString());
 
 var Clusters = builder.build('Clusters');
-var Record = builder.build('NodeCluster');
+var NodeCluster = builder.build('NodeCluster');
 
 function saveClusters(graph, outDir) {
   if (!fs.existsSync(outDir)) {
@@ -46,7 +46,7 @@ function saveClusters(graph, outDir) {
     var records = [];
     graph.forEachNode(function(node) {
       var clusterId = clusters.getClass(node.id);
-      var record = new Record();
+      var record = new NodeCluster();
       record.clusterId = number(clusterId);
       record.nodeId = node.id.toString();
       records.push(record);

@@ -21,12 +21,20 @@ function getGraphFromChunk(record) {
 }
 
 export function convertToD3Graph(graph) {
+  let links = []
+
+  graph.links.forEach(l => {
+    if (l.from !== l.to) {
+      links.push({
+        source: l.from,
+        target: l.to
+      })
+    }
+  })
+
   return {
     nodes: graph.nodes.map(n => ({ index: n.id })),
-    links: graph.links.map(l => ({
-      source: l.from,
-      target: l.to
-    }))
+    links
   }
 }
 

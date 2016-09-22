@@ -26,13 +26,15 @@ function saveClusters(graph, outDir) {
 
   do {
     clusters = detectClusters(graph);
-    clusters.renumber();
+    var groupIsolates = true;
+    clusters.renumber(groupIsolates);
 
     console.log('Clusters found. Saving layer ' + currentLayer);
     saveToDist(graph, clusters, currentLayer);
 
     console.log('Coarsening the graph');
     graph = coarsen(graph, clusters);
+    console.log('Graph coarsed. Number of nodes: ' + graph.getNodesCount() + '; edges: ' + graph.getLinksCount());
     currentLayer += 1;
   } while (clusters.canCoarse());
 

@@ -20,7 +20,6 @@ var fromProtobuf = require('ngraph.toprotobuf/readPrimitive.js');
 
 var srcGraph = readLayerGraph(currentLayerNumber);
 var ratio;
-
 do {
   var clusterGraph = readLayerGraph(currentLayerNumber + 1)
   if (!clusterGraph) break;
@@ -31,6 +30,7 @@ do {
   var currentLayerSize = srcGraph.graph.getNodesCount();
 
   ratio = nextLayerSize/currentLayerSize;
+  console.log('next layer size: ' + nextLayerSize + '; current layer size: ' + currentLayerSize);
   srcGraph = clusterGraph;
 
   currentLayerNumber += 1;
@@ -67,17 +67,24 @@ function saveSubgraphs(current, next) {
   var clusterGraph = next.graph;
   var communityNodeGraphNodeCount = clusterGraph.getNodesCount();
   var currentNodeIndex = 0;
+  var seenClusterIds = [];
 
-  // In community graph each node is a community (aka cluster) inside lower
-  // level graph.
+  // In cluster graph each node is a cluster inside lower level graph.
   clusterGraph.forEachNode(saveInternalNode);
+
+  for (var i = 0; i < seenClusterIds.length; ++i) {
+    if (seenClusterIds[i] === undefined) throw new Error('cluster id cannot be absent: ' + i);
+  }
 
   graphBuffer.commit();
 
   function saveInternalNode(cluster) {
     currentNodeIndex += 1;
     var clusterId = Number.parseInt(cluster.id, 10);
+
     if (Number.isNaN(clusterId)) throw new Error('Unexpected cluster id: ' + cluster.id);
+
+    seenClusterIds[clusterId] = 1
 
     var nodeSet = current.nodesInCluster.get(clusterId);
     if (!nodeSet) throw new Error('Cluster is not defuned: ' + clusterId);

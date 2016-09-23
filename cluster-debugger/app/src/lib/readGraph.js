@@ -1,4 +1,4 @@
-import getClusters from './clustersViewModel.js'
+import getClusters from './getClusters.js'
 import path from 'path'
 
 export default readGraph

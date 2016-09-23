@@ -56,7 +56,7 @@
 </template>
 
 <script>
-import getClusters from '../lib/clustersViewModel.js'
+import getClusters from '../lib/getClusters.js'
 
 export default {
   components: { },

@@ -21,7 +21,7 @@ router.map({
     component: require('components/LandingPageView')
   },
   '/view-graph': {
-    component: require('components/ViewGraph')
+    component: require('components/ViewGraphFile')
   },
   '/view-cluster': {
     component: require('components/ViewCluster'),

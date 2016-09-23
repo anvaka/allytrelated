@@ -4,7 +4,7 @@ let THREE = require('three')
 export default render
 
 function render(dgraph, container) {
-  var max = 2000
+  var max = Math.max(2000, dgraph.nodes.length * 15)
   var camera = new THREE.PerspectiveCamera(60, container.clientWidth / container.clientHeight, 1, max)
 
   var scene = new THREE.Scene()

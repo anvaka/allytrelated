@@ -50,6 +50,7 @@
     </div>
     <div class='graph-view'>
       <a class="waves-effect waves-light btn" v-link="{path: '/', append: false}">Go Back</a>
+      <a class="waves-effect waves-light btn" v-on:click='copyDot'>Copy Dot</a>
       <div class='scene' v-el:scene></div>
     </div>
   </div>
@@ -59,6 +60,7 @@
 import getGraphs from '../lib/getGraphs.js'
 import createRenderer from '../lib/createRenderer'
 import {convertToD3Graph} from '../lib/readGraph.js'
+import exportToDot from '../lib/exportToDot.js'
 
 export default {
   components: { },
@@ -76,7 +78,14 @@ export default {
       }
 
       let g = convertToD3Graph(graph)
+      this.graph = g
       this.renderer = createRenderer(g, this.$els.scene)
+    },
+
+    copyDot() {
+      if (this.graph) {
+        exportToDot(this.graph)
+      }
     }
   }
 }

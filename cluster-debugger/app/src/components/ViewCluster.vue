@@ -63,7 +63,7 @@ export default {
   name: 'view-cluster',
   computed: {
     clusters() {
-      return getClusters(this.$route.query.folder).clusters.slice(0, 100)
+      return getClusters(this.$route.query.folder).clusters.slice(0, 1000)
     }
   }
 }

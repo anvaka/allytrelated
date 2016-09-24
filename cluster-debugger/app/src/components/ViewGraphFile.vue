@@ -67,7 +67,7 @@ export default {
   name: 'view-graph',
   computed: {
     graphs() {
-      return getGraphs(this.$route.query.folder).graphs.sort(byDegree).slice(0, 100)
+      return getGraphs(this.$route.query.folder).graphs.sort(byDegree).slice(0, 1000)
     }
   },
   methods: {
